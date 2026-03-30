@@ -77,3 +77,20 @@ class DrawResult(models.Model):
         super().clean()
         if self.prize_rank not in (1, 2, 3):
             raise ValidationError({'prize_rank': 'Prize rank must be 1, 2, or 3.'})
+
+
+class FundraisingExtra(models.Model):
+    """Tracks extra income from non-raffle sources (food sales, products, etc.).
+
+    Only one record should exist — use get_or_create with id=1.
+    """
+    amount = models.PositiveIntegerField(default=0, help_text="Extra income in MXN")
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+
+    def __str__(self):
+        return f"Extra income: ${self.amount} MXN"

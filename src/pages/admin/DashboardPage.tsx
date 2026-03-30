@@ -10,8 +10,11 @@ interface FolioCell {
 
 interface DashboardData {
   active_tickets: number;
+  raffle_raised: number;
+  extra_raised: number;
   total_raised: number;
   goal: number;
+  raffle_goal: number;
   grid: FolioCell[];
 }
 
@@ -64,13 +67,19 @@ export default function DashboardPage() {
           <span className="stat-value">{dashboard?.active_tickets ?? 0}</span>
         </div>
         <div className="card-elevated stat-card">
-          <span className="label-meta">Recaudado</span>
+          <span className="label-meta">Sorteo</span>
           <span className="stat-value">
-            ${(dashboard?.total_raised ?? 0).toLocaleString("es-MX")} MXN
+            ${(dashboard?.raffle_raised ?? 0).toLocaleString("es-MX")} MXN
           </span>
         </div>
         <div className="card-elevated stat-card">
-          <span className="label-meta">Meta</span>
+          <span className="label-meta">Otros ingresos</span>
+          <span className="stat-value">
+            ${(dashboard?.extra_raised ?? 0).toLocaleString("es-MX")} MXN
+          </span>
+        </div>
+        <div className="card-elevated stat-card">
+          <span className="label-meta">Meta total</span>
           <span className="stat-value">
             ${(dashboard?.goal ?? 0).toLocaleString("es-MX")} MXN
           </span>
@@ -80,18 +89,22 @@ export default function DashboardPage() {
       {/* Progress bar */}
       <div className="card progress-section">
         <div className="progress-header">
-          <span className="label-meta">Progreso de recaudación</span>
+          <span className="label-meta">Progreso total</span>
           <span className="label-meta">{progress.toFixed(1)}%</span>
         </div>
-        <div className="progress-bar-track">
+        <div className="progress-bar-stacked-admin">
           <div
-            className="progress-bar-fill"
-            style={{ width: `${progress}%` }}
-            role="progressbar"
-            aria-valuenow={progress}
-            aria-valuemin={0}
-            aria-valuemax={100}
+            className="progress-segment progress-raffle"
+            style={{ width: `${Math.min(((dashboard?.raffle_raised ?? 0) / (dashboard?.goal ?? 1)) * 100, 100)}%` }}
           />
+          <div
+            className="progress-segment progress-extra"
+            style={{ width: `${Math.min(((dashboard?.extra_raised ?? 0) / (dashboard?.goal ?? 1)) * 100, 100)}%` }}
+          />
+        </div>
+        <div className="progress-legend-admin">
+          <span><span className="legend-dot-bar raffle" /> Sorteo</span>
+          <span><span className="legend-dot-bar extra" /> Otros</span>
         </div>
       </div>
 

@@ -479,6 +479,53 @@
   transition: width var(--transition-normal);
 }
 
+/* Admin stacked progress bar */
+.progress-bar-stacked-admin {
+  display: flex;
+  width: 100%;
+  height: 1rem;
+  background: var(--surface-container-high);
+  border-radius: var(--rounded-md);
+  overflow: hidden;
+}
+
+.progress-bar-stacked-admin .progress-segment {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.progress-raffle {
+  background: var(--primary);
+}
+
+.progress-extra {
+  background: var(--secondary-fixed, #cef145);
+}
+
+.progress-legend-admin {
+  display: flex;
+  gap: var(--spacing-4);
+  font-size: var(--body-sm);
+  color: var(--on-surface-variant);
+  margin-top: var(--spacing-2);
+}
+
+.legend-dot-bar {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: var(--rounded-sm);
+  margin-right: var(--spacing-1);
+}
+
+.legend-dot-bar.raffle {
+  background: var(--primary);
+}
+
+.legend-dot-bar.extra {
+  background: var(--secondary-fixed, #cef145);
+}
+
 .quick-actions {
   display: flex;
   gap: var(--spacing-4);

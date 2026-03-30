@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Ticket
+from .models import Ticket, FundraisingExtra
 from .serializers import (
     TicketBulkCreateSerializer,
     TicketCreateSerializer,
@@ -234,7 +234,8 @@ class ThrottledTokenObtainPairView(TokenObtainPairView):
     throttle_classes = [LoginThrottle]
 
 TICKET_PRICE_MXN = 200
-FUNDRAISING_GOAL_MXN = 26_000
+FUNDRAISING_GOAL_MXN = 52_000
+RAFFLE_GOAL_MXN = 40_000
 
 
 class DrawExecuteView(APIView):
@@ -307,7 +308,11 @@ class DashboardView(APIView):
 
     def get(self, request):
         active_count = Ticket.objects.filter(status=Ticket.Status.ACTIVE).count()
-        total_raised = active_count * TICKET_PRICE_MXN
+        raffle_raised = active_count * TICKET_PRICE_MXN
+
+        # Extra income from non-raffle sources
+        extra, _ = FundraisingExtra.objects.get_or_create(pk=1, defaults={"amount": 0})
+        extra_raised = extra.amount
 
         # Build folio grid (1-200)
         prefix = getattr(settings, 'FOLIO_PREFIX', 'HC')
@@ -319,7 +324,7 @@ class DashboardView(APIView):
         cancelled_folios = set(
             Ticket.objects.filter(status=Ticket.Status.CANCELLED)
             .values_list('folio', flat=True)
-        ) - active_folios  # exclude if re-assigned
+        ) - active_folios
 
         grid = []
         for i in range(1, total_folios + 1):
@@ -333,8 +338,33 @@ class DashboardView(APIView):
 
         data = {
             "active_tickets": active_count,
-            "total_raised": total_raised,
+            "raffle_raised": raffle_raised,
+            "extra_raised": extra_raised,
+            "total_raised": raffle_raised + extra_raised,
             "goal": FUNDRAISING_GOAL_MXN,
+            "raffle_goal": RAFFLE_GOAL_MXN,
             "grid": grid,
         }
         return Response(data)
+
+
+class FundraisingExtraView(APIView):
+    """GET/PUT /api/fundraising-extra — View/update extra income (admin only)."""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        extra, _ = FundraisingExtra.objects.get_or_create(pk=1, defaults={"amount": 0})
+        return Response({"amount": extra.amount})
+
+    def put(self, request):
+        amount = request.data.get("amount")
+        if amount is None or not isinstance(amount, int) or amount < 0:
+            return Response(
+                {"detail": "amount must be a non-negative integer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        extra, _ = FundraisingExtra.objects.get_or_create(pk=1, defaults={"amount": 0})
+        extra.amount = amount
+        extra.updated_by = request.user
+        extra.save()
+        return Response({"amount": extra.amount})

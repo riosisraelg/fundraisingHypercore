@@ -10,8 +10,11 @@ interface FolioCell {
 
 interface DashboardData {
   active_tickets: number;
+  raffle_raised: number;
+  extra_raised: number;
   total_raised: number;
   goal: number;
+  raffle_goal: number;
   grid: FolioCell[];
 }
 
@@ -94,32 +97,41 @@ export default function HomePage() {
               </div>
               <div className="stat-block">
                 <span className="stat-value">
-                  ${dashboard.total_raised.toLocaleString("es-MX")}
+                  ${dashboard.raffle_raised.toLocaleString("es-MX")}
                 </span>
-                <span className="stat-label">Recaudado</span>
+                <span className="stat-label">Sorteo</span>
+              </div>
+              <div className="stat-block">
+                <span className="stat-value">
+                  ${dashboard.extra_raised.toLocaleString("es-MX")}
+                </span>
+                <span className="stat-label">Otros ingresos</span>
               </div>
               <div className="stat-block">
                 <span className="stat-value">
                   ${dashboard.goal.toLocaleString("es-MX")}
                 </span>
-                <span className="stat-label">Meta</span>
+                <span className="stat-label">Meta total</span>
               </div>
             </div>
-            <div
-              className="progress-bar"
-              role="progressbar"
-              aria-valuenow={dashboard.total_raised}
-              aria-valuemin={0}
-              aria-valuemax={dashboard.goal}
-              aria-label="Progreso de recaudación"
-            >
+            <div className="progress-bar-stacked" aria-label="Progreso de recaudación">
               <div
-                className="progress-fill"
-                style={{ width: `${progressPercent}%` }}
+                className="progress-segment progress-raffle"
+                style={{ width: `${Math.min((dashboard.raffle_raised / dashboard.goal) * 100, 100)}%` }}
+                title={`Sorteo: $${dashboard.raffle_raised.toLocaleString("es-MX")}`}
+              />
+              <div
+                className="progress-segment progress-extra"
+                style={{ width: `${Math.min((dashboard.extra_raised / dashboard.goal) * 100, 100)}%` }}
+                title={`Otros: $${dashboard.extra_raised.toLocaleString("es-MX")}`}
               />
             </div>
+            <div className="progress-legend">
+              <span className="legend-item"><span className="legend-dot-bar raffle" /> Sorteo</span>
+              <span className="legend-item"><span className="legend-dot-bar extra" /> Otros ingresos</span>
+            </div>
             <p className="progress-text">
-              {progressPercent.toFixed(0)}% de la meta alcanzada
+              ${dashboard.total_raised.toLocaleString("es-MX")} de ${dashboard.goal.toLocaleString("es-MX")} ({progressPercent.toFixed(0)}%)
             </p>
           </div>
         ) : (

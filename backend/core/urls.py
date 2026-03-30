@@ -23,4 +23,6 @@ urlpatterns = [
     path('draw/results', views.DrawResultsPublicView.as_view(), name='draw-results'),
     # Dashboard (public)
     path('dashboard', views.DashboardView.as_view(), name='dashboard'),
+    # Fundraising extra (admin)
+    path('fundraising-extra', views.FundraisingExtraView.as_view(), name='fundraising-extra'),
 ]
