@@ -3,6 +3,7 @@ Django settings for HyperCore Gift Draw Platform.
 """
 
 import os
+import sys
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -13,6 +14,40 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'change-me')
 DEBUG = os.getenv('DJANGO_DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# --- Security hardening (production) ---
+if not DEBUG:
+    # Force HTTPS
+    SECURE_SSL_REDIRECT = False  # CloudFront handles HTTPS termination
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # HSTS — tell browsers to always use HTTPS
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # Prevent content type sniffing
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    # XSS protection
+    SECURE_BROWSER_XSS_FILTER = True
+
+    # Clickjacking protection
+    X_FRAME_OPTIONS = 'DENY'
+
+    # Referrer policy
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+    # CSRF trusted origins (for any non-API form submissions)
+    CSRF_TRUSTED_ORIGINS = [
+        origin.strip()
+        for origin in os.getenv(
+            'CORS_ALLOWED_ORIGINS', 'https://hypercoreqro.lat'
+        ).split(',')
+        if origin.strip()
+    ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -114,7 +149,6 @@ REST_FRAMEWORK = {
 }
 
 # Disable throttling during tests so rate-limited endpoints aren't blocked
-import sys
 if 'test' in sys.argv:
     REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
         'anon': None,
