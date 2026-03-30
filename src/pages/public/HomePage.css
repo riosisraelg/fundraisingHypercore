@@ -58,6 +58,14 @@
 }
 
 /* Prizes */
+.prizes-section {
+  text-align: center;
+}
+
+.prizes-section .section-title {
+  text-align: center;
+}
+
 .prizes-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

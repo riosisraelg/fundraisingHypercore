@@ -176,7 +176,7 @@ export default function HomePage() {
             WhatsApp
           </a>
           <a
-            href="https://instagram.com/hypercore_team"
+            href="https://www.instagram.com/hyper.coree"
             className="btn-ghost"
             target="_blank"
             rel="noopener noreferrer"
