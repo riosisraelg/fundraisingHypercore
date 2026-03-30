@@ -24,19 +24,19 @@ const TEAM_MEMBERS: TeamMember[] = [
     photo: "/team/mariana.jpeg",
   },
   {
-    name: "Miembro 3",
-    role: "Ingeniería Industrial",
-    linkedin: "https://linkedin.com/in/miembro3",
-    initials: "M3",
-  },
-  {
     name: "Diego Santiago Saucedo García",
-    role: "Ingeniería en Sistemas",
-    linkedin: "https://www.linkedin.com/in/diego-saucedo-garc%C3%ADa-3a485b337",
+    role: "Ingeniería Mecatrónica",
+    linkedin: "https://www.linkedin.com/posts/diego-saucedo-garc%C3%ADa-3a485b337_emocionado-de-compartir-este-logro-me-share-7444458337804558336-QbL-",
     initials: "DS",
   },
   {
-    name: "Miembro 5",
+    name: "Ana Sarai Zuñiga Esquivel",
+    role: "Ingeniería Industrial",
+    linkedin: "https://linkedin.com/in/miembro4",
+    initials: "AZ",
+  },
+  {
+    name: "Natalie",
     role: "Ingeniería Mecatrónica",
     linkedin: "https://linkedin.com/in/miembro5",
     initials: "M5",
