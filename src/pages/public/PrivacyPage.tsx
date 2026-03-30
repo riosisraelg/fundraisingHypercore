@@ -50,7 +50,7 @@ export default function PrivacyPage() {
           <p>
             Si tienes preguntas sobre el manejo de tus datos, contáctanos por{" "}
             <a
-              href="https://wa.me/5218000000000"
+              href="https://wa.me/5214421206701"
               target="_blank"
               rel="noopener noreferrer"
             >

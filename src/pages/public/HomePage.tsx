@@ -39,7 +39,7 @@ export default function HomePage() {
           ayudas a llegar a Cancún.
         </p>
         <a
-          href="https://wa.me/5218000000000"
+          href="https://wa.me/5214421206701"
           className="btn-primary hero-cta"
           target="_blank"
           rel="noopener noreferrer"
@@ -168,7 +168,7 @@ export default function HomePage() {
         <h2 className="section-title">Contacto</h2>
         <div className="contact-links">
           <a
-            href="https://wa.me/5218000000000"
+            href="https://wa.me/5214421206701"
             className="btn-primary"
             target="_blank"
             rel="noopener noreferrer"
