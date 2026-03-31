@@ -13,6 +13,7 @@ from .models import Ticket, FundraisingExtra
 from .serializers import (
     TicketBulkCreateSerializer,
     TicketCreateSerializer,
+    TicketEditSerializer,
     TicketReassignSerializer,
     TicketResponseSerializer,
 )
@@ -150,6 +151,40 @@ class TicketReassignView(APIView):
             new_ticket, context={'request': request},
         )
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class TicketEditView(APIView):
+    """PATCH /api/tickets/:id/edit — Edit buyer name/phone on an active ticket."""
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, ticket_id):
+        ticket = get_object_or_404(
+            Ticket.objects.select_related('created_by'), pk=ticket_id,
+        )
+
+        if ticket.status == Ticket.Status.CANCELLED:
+            return Response(
+                {'detail': 'Cannot edit a cancelled ticket.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = TicketEditSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        update_fields = []
+        if 'full_name' in serializer.validated_data:
+            ticket.full_name = serializer.validated_data['full_name']
+            update_fields.append('full_name')
+        if 'phone' in serializer.validated_data:
+            ticket.phone = serializer.validated_data['phone']
+            update_fields.append('phone')
+
+        ticket.save(update_fields=update_fields)
+
+        response_serializer = TicketResponseSerializer(
+            ticket, context={'request': request},
+        )
+        return Response(response_serializer.data)
 
 
 

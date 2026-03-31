@@ -13,6 +13,7 @@ urlpatterns = [
     path('tickets/', views.TicketListView.as_view(), name='ticket-list'),
     path('tickets/<uuid:ticket_id>', views.TicketDetailView.as_view(), name='ticket-detail'),
     path('tickets/<uuid:ticket_id>/cancel', views.TicketCancelView.as_view(), name='ticket-cancel'),
+    path('tickets/<uuid:ticket_id>/edit', views.TicketEditView.as_view(), name='ticket-edit'),
     path('tickets/<uuid:ticket_id>/reassign', views.TicketReassignView.as_view(), name='ticket-reassign'),
     # Ticket downloads (admin)
     path('tickets/<uuid:ticket_id>/download/pdf', views.TicketDownloadPDFView.as_view(), name='ticket-download-pdf'),

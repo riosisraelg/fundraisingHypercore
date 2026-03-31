@@ -206,6 +206,32 @@ class TicketResponseSerializer(serializers.ModelSerializer):
         }
 
 
+class TicketEditSerializer(serializers.Serializer):
+    """Validates input for editing ticket buyer info (name/phone)."""
+    full_name = serializers.CharField(max_length=200, required=False)
+    phone = serializers.CharField(max_length=20, required=False)
+
+    def validate_full_name(self, value):
+        if value is not None and not value.strip():
+            raise serializers.ValidationError("Full name cannot be blank.")
+        return value.strip() if value else value
+
+    def validate_phone(self, value):
+        if value is not None and not value.strip():
+            raise serializers.ValidationError("Phone cannot be blank.")
+        if value:
+            import re
+            pattern = r'^\+?[\d\s\-\(\)]{7,20}$'
+            if not re.match(pattern, value.strip()):
+                raise serializers.ValidationError("Invalid phone number format.")
+        return value.strip() if value else value
+
+    def validate(self, data):
+        if not data.get('full_name') and not data.get('phone'):
+            raise serializers.ValidationError("Provide at least full_name or phone to update.")
+        return data
+
+
 from .models import DrawResult
 
 

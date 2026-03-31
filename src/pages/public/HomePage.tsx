@@ -41,15 +41,13 @@ export default function HomePage() {
       {/* Hero */}
       <section className="hero-section">
         <span className="hero-badge">🎟️ Rifa Benéfica — 25 de Abril, 6:00 PM</span>
-        <h1 className="hero-title">
-          ¡Compra tu boleto y gana premios!
-        </h1>
+        <h1 className="hero-title">¡Compra tu boleto y gana premios!</h1>
         <p className="hero-description">
-          Rifa benéfica de Team HyperCore (Universidad Tecmilenio). 
-          Solo 200 boletos a $200 MXN cada uno. Escoge tu número, 
-          paga por transferencia o efectivo, y participa por 3 premios. 
+          Rifa benéfica de Team HyperCore (Universidad Tecmilenio).
+          Solo 200 boletos a $200 MXN cada uno. Escoge tu número,
+          paga por transferencia o efectivo, y participa por 3 premios.
           El sorteo se realiza el 25 de abril a las 6:00 PM en vivo.
-          Todos los fondos van para nuestra participación en la final 
+          Todos los fondos van para nuestra participación en la final
           nacional del KIA Mexico Innovation MeetUp 2026 en Cancún.
         </p>
         <a
@@ -87,8 +85,102 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Dashboard */}
+      {/* How to participate + Payment Info — side by side */}
+      <section className="participate-payment-section">
+        <div className="participate-payment-grid">
+          <div className="participate-block">
+            <h2 className="section-title">¿Cómo participar?</h2>
+            <ol className="steps-list">
+              <li className="step-item">
+                <span className="step-number">1</span>
+                <div>
+                  <span className="step-title">Escoge tu número</span>
+                  <span className="step-desc">
+                    Revisa la tabla de boletos abajo y elige los números disponibles.
+                  </span>
+                </div>
+              </li>
+              <li className="step-item">
+                <span className="step-number">2</span>
+                <div>
+                  <span className="step-title">Escríbenos por WhatsApp</span>
+                  <span className="step-desc">
+                    Mándanos tu nombre, teléfono y los números que quieres.
+                  </span>
+                </div>
+              </li>
+              <li className="step-item">
+                <span className="step-number">3</span>
+                <div>
+                  <span className="step-title">Paga $200 MXN por boleto</span>
+                  <span className="step-desc">
+                    Transferencia bancaria o efectivo. Envía tu comprobante por WhatsApp.
+                  </span>
+                </div>
+              </li>
+              <li className="step-item">
+                <span className="step-number">4</span>
+                <div>
+                  <span className="step-title">Recibe tu boleto digital</span>
+                  <span className="step-desc">
+                    Te enviamos un PDF con tu folio único.
+                  </span>
+                </div>
+              </li>
+              <li className="step-item">
+                <span className="step-number">5</span>
+                <div>
+                  <span className="step-title">Sorteo el 25 de Abril, 6 PM</span>
+                  <span className="step-desc">
+                    3 ganadores al azar. Resultados aquí y por WhatsApp.
+                  </span>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div className="payment-info-card card-elevated">
+            <h2 className="section-title">Datos de pago</h2>
+            <p className="payment-thanks">
+              ¡Gracias por apoyarnos a llegar a la final!
+            </p>
+            <div className="payment-details">
+              <div className="payment-row">
+                <span className="payment-label">Beneficiaria</span>
+                <span className="payment-value">Mariana Lopez Garcia</span>
+              </div>
+              <div className="payment-row payment-row--highlight">
+                <span className="payment-value payment-bank">BBVA</span>
+              </div>
+              <div className="payment-row">
+                <span className="payment-label">No. Cuenta</span>
+                <span className="payment-value">1596786461</span>
+              </div>
+              <div className="payment-row">
+                <span className="payment-label">CLABE</span>
+                <span className="payment-value">012180015967864619</span>
+              </div>
+            </div>
+            <p className="payment-note">
+              ¡No olvides enviar tu comprobante por WhatsApp!
+            </p>
+            <a
+              href="https://wa.me/5214421206701"
+              className="btn-primary payment-cta"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Enviar comprobante
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Folio Grid + Dashboard */}
       <section className="dashboard-section">
+        {dashboard?.grid && (
+          <FolioGrid grid={dashboard.grid} title="¡Escoge tu boleto!" />
+        )}
         <h2 className="section-title">Progreso de recaudación</h2>
         {loading ? (
           <p className="dashboard-loading">Cargando datos…</p>
@@ -122,12 +214,12 @@ export default function HomePage() {
               <div
                 className="progress-segment progress-raffle"
                 style={{ width: `${Math.min((dashboard.raffle_net / dashboard.goal) * 100, 100)}%` }}
-                title={`Sorteo (neto): $${dashboard.raffle_net.toLocaleString("es-MX")}`}
+                title={`Sorteo (neto): ${dashboard.raffle_net.toLocaleString("es-MX")}`}
               />
               <div
                 className="progress-segment progress-extra"
                 style={{ width: `${Math.min((dashboard.extra_raised / dashboard.goal) * 100, 100)}%` }}
-                title={`Otros: $${dashboard.extra_raised.toLocaleString("es-MX")}`}
+                title={`Otros: ${dashboard.extra_raised.toLocaleString("es-MX")}`}
               />
             </div>
             <div className="progress-legend">
@@ -144,61 +236,6 @@ export default function HomePage() {
         ) : (
           <p className="dashboard-error">No se pudieron cargar los datos.</p>
         )}
-        {dashboard?.grid && (
-          <FolioGrid grid={dashboard.grid} title="¡Escoge tu boleto!" />
-        )}
-      </section>
-
-      {/* How to participate */}
-      <section className="participate-section">
-        <h2 className="section-title">¿Cómo funciona la rifa?</h2>
-        <ol className="steps-list">
-          <li className="step-item">
-            <span className="step-number">1</span>
-            <div>
-              <span className="step-title">Escoge tu número</span>
-              <span className="step-desc">
-                Revisa la tabla de boletos arriba y elige los números disponibles que quieras.
-              </span>
-            </div>
-          </li>
-          <li className="step-item">
-            <span className="step-number">2</span>
-            <div>
-              <span className="step-title">Escríbenos por WhatsApp</span>
-              <span className="step-desc">
-                Mándanos mensaje con tu nombre, teléfono y los números que quieres. Puedes comprar varios boletos.
-              </span>
-            </div>
-          </li>
-          <li className="step-item">
-            <span className="step-number">3</span>
-            <div>
-              <span className="step-title">Paga $200 MXN por boleto</span>
-              <span className="step-desc">
-                Aceptamos transferencia bancaria o efectivo. Te confirmamos el pago y apartamos tus números.
-              </span>
-            </div>
-          </li>
-          <li className="step-item">
-            <span className="step-number">4</span>
-            <div>
-              <span className="step-title">Recibe tu boleto digital</span>
-              <span className="step-desc">
-                Te enviamos un PDF con tu folio único como comprobante de participación.
-              </span>
-            </div>
-          </li>
-          <li className="step-item">
-            <span className="step-number">5</span>
-            <div>
-              <span className="step-title">Sorteo el 25 de Abril, 6 PM</span>
-              <span className="step-desc">
-                Se eligen 3 ganadores al azar. Los resultados se publican aquí y contactamos a los ganadores por WhatsApp.
-              </span>
-            </div>
-          </li>
-        </ol>
       </section>
 
       {/* Contact */}

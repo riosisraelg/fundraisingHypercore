@@ -25,6 +25,9 @@ export default function TicketListPage() {
   const [reassignId, setReassignId] = useState<string | null>(null);
   const [reassignName, setReassignName] = useState("");
   const [reassignPhone, setReassignPhone] = useState("");
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
   const [error, setError] = useState("");
 
   async function loadTickets() {
@@ -42,10 +45,31 @@ export default function TicketListPage() {
     loadTickets();
   }, []);
 
-  const filtered = tickets.filter((t) => {
+  // Sort by date descending (newest first)
+  const sorted = [...tickets].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+
+  const filtered = sorted.filter((t) => {
     if (filter === "all") return true;
     return t.status === filter;
   });
+
+  // Only the most recent cancelled ticket per folio gets "Reasignar" (and only if no active ticket exists for that folio)
+  const activeFolios = new Set(
+    tickets.filter((t) => t.status === "active").map((t) => t.folio)
+  );
+  const latestCancelledByFolio = new Map<string, string>();
+  for (const t of sorted) {
+    if (t.status === "cancelled" && !latestCancelledByFolio.has(t.folio)) {
+      latestCancelledByFolio.set(t.folio, t.id);
+    }
+  }
+  function canReassign(t: Ticket): boolean {
+    if (t.status !== "cancelled") return false;
+    if (activeFolios.has(t.folio)) return false;
+    return latestCancelledByFolio.get(t.folio) === t.id;
+  }
 
   async function handleCancel(ticketId: string) {
     setError("");
@@ -83,6 +107,38 @@ export default function TicketListPage() {
         const data = err.data as Record<string, string | string[]>;
         const msgs = Object.values(data).flat().join(" ");
         setError(msgs || "Error al reasignar.");
+      }
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  function openEdit(ticket: Ticket) {
+    setEditId(ticket.id);
+    setEditName(ticket.full_name);
+    setEditPhone(ticket.phone);
+  }
+
+  async function handleEdit(e: FormEvent) {
+    e.preventDefault();
+    if (!editId) return;
+    setError("");
+    setActionLoading(editId);
+    try {
+      await api.patch(
+        `/tickets/${editId}/edit`,
+        { full_name: editName, phone: editPhone },
+        true
+      );
+      setEditId(null);
+      setEditName("");
+      setEditPhone("");
+      await loadTickets();
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const data = err.data as Record<string, string | string[]>;
+        const msgs = Object.values(data).flat().join(" ");
+        setError(msgs || "Error al editar.");
       }
     } finally {
       setActionLoading(null);
@@ -181,6 +237,55 @@ export default function TicketListPage() {
         </div>
       )}
 
+      {/* Edit modal */}
+      {editId && (
+        <div className="modal-overlay" onClick={() => setEditId(null)}>
+          <div className="modal-card card-elevated" onClick={(e) => e.stopPropagation()}>
+            <h2 className="page-subheading">Editar boleto</h2>
+            <p className="reassign-folio-label">
+              Folio: {tickets.find((t) => t.id === editId)?.folio}
+            </p>
+            <form onSubmit={handleEdit}>
+              <div className="form-group">
+                <label htmlFor="edit_name" className="label-meta">
+                  Nombre completo
+                </label>
+                <input
+                  id="edit_name"
+                  className="input-field"
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  maxLength={200}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit_phone" className="label-meta">
+                  Teléfono
+                </label>
+                <input
+                  id="edit_phone"
+                  className="input-field"
+                  type="tel"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="submit" className="btn-primary" disabled={actionLoading === editId}>
+                  {actionLoading === editId ? "Guardando…" : "Guardar"}
+                </button>
+                <button type="button" className="btn-ghost" onClick={() => setEditId(null)}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Ticket table */}
       {filtered.length === 0 ? (
         <p className="empty-state">No hay boletos para mostrar.</p>
@@ -214,6 +319,13 @@ export default function TicketListPage() {
                       <>
                         <button
                           className="btn-ghost btn-sm"
+                          onClick={() => openEdit(t)}
+                          type="button"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="btn-ghost btn-sm"
                           onClick={() => handleCancel(t.id)}
                           disabled={actionLoading === t.id}
                           type="button"
@@ -228,7 +340,7 @@ export default function TicketListPage() {
                           PDF
                         </button>
                       </>
-                    ) : (
+                    ) : canReassign(t) ? (
                       <button
                         className="btn-accent btn-sm"
                         onClick={() => setReassignId(t.id)}
@@ -236,7 +348,7 @@ export default function TicketListPage() {
                       >
                         Reasignar
                       </button>
-                    )}
+                    ) : null}
                   </td>
                 </tr>
               ))}
