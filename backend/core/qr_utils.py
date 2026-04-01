@@ -15,7 +15,7 @@ def generate_qr_image(ticket_id: uuid.UUID, base_url: str) -> bytes:
     qr.add_data(validation_url)
     qr.make(fit=True)
 
-    img = qr.make_image(fill_color="black", back_color="white")
+    img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     buf.seek(0)
