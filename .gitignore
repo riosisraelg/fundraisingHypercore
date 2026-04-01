@@ -78,3 +78,7 @@ amplifyconfiguration*
 dist
 dist-ssr
 *.local
+
+# Duplicate files with spaces (macOS copies)
+* 2.*
+* 3.*
