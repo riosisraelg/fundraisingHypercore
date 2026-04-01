@@ -27,6 +27,9 @@ export default function AdminLayout() {
               <NavLink to="/admin/tickets/new">Registrar Boleto</NavLink>
             </li>
             <li>
+              <NavLink to="/validate">Validar Boleto</NavLink>
+            </li>
+            <li>
               <NavLink to="/admin/draw">Sorteo</NavLink>
             </li>
           </ul>

@@ -21,6 +21,9 @@ export default function PublicLayout() {
               <NavLink to="/results">Resultados</NavLink>
             </li>
             <li>
+              <NavLink to="/validate">Validar</NavLink>
+            </li>
+            <li>
               <NavLink to="/privacy">Privacidad</NavLink>
             </li>
           </ul>
