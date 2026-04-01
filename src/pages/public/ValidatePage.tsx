@@ -119,8 +119,10 @@ export default function ValidatePage() {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    if (searchId.trim()) {
-      navigate(`/validate/${searchId.trim()}`);
+    const raw = searchId.trim();
+    if (raw) {
+      const id = extractTicketId(raw);
+      navigate(`/validate/${id}`);
     }
   }
 
