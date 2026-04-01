@@ -176,11 +176,24 @@ export default function FolioGrid({ grid, title = "Boletos", mode = "public", ti
                             setSelectedCell(null);
                           }}>Reasignar Comprador</button>
                         )}
+                        {selectedCell.status === "cancelled" && (
+                          <button className="btn-secondary btn-sm" onClick={() => openWhatsApp(folioNumber, "cancelled")}>
+                            Compartir Link (Liberado)
+                          </button>
+                        )}
                       </div>
                     </div>
                   ) : (
                     <div className="folio-popup-available">
-                      <p className="label-meta">No hay datos de compra asociados a este folio.</p>
+                      <p className="label-meta" style={{ marginBottom: "1rem" }}>Este folio está disponible para ser asignado.</p>
+                      <div className="folio-popup-actions">
+                        <button className="btn-primary btn-sm" onClick={() => {
+                          window.location.href = `/admin/tickets/new?folio=${folioNumber}`;
+                        }}>Registrar Venta (Manual)</button>
+                        <button className="btn-secondary btn-sm" onClick={() => openWhatsApp(folioNumber, "available")}>
+                          Compartir por WhatsApp
+                        </button>
+                      </div>
                     </div>
                   )}
                 </>

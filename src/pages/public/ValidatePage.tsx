@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Html5Qrcode } from "html5-qrcode";
+import * as pdfjsLib from "pdfjs-dist";
 import { api, ApiError } from "../../lib/api";
 import "./ValidatePage.css";
+
+// Configure PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
 interface TicketValidationResponse {
   id: string;
@@ -121,8 +125,58 @@ export default function ValidatePage() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setScanError(null);
+    
+    if (file.type === "application/pdf") {
+      setLoading(true);
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 2.0 });
+        
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        
+        if (!context) throw new Error("Canvas context failed");
+        
+        await page.render({ canvasContext: context, viewport }).promise;
+        
+        const imageData = canvas.toDataURL("image/png");
+        const html5Qrcode = new Html5Qrcode("reader-hidden");
+        // Convert dataURL to image object for scanFile
+        const img = new Image();
+        img.src = imageData;
+        await new Promise((resolve) => { img.onload = resolve; });
+        
+        // Wait, scanFile works on File objects. Let's convert canvas to Blob/File.
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            setScanError("Error procesando el PDF.");
+            setLoading(false);
+            return;
+          }
+          const processedFile = new File([blob], "from-pdf.png", { type: "image/png" });
+          try {
+            const text = await html5Qrcode.scanFile(processedFile, true);
+            const id = extractTicketId(text);
+            navigate(`/validate/${id}`);
+          } catch (err) {
+            setScanError("No se detectó ningún código QR en el PDF.");
+            setLoading(false);
+          }
+        }, "image/png");
+
+      } catch (err) {
+        console.error("PDF processing error", err);
+        setScanError("No se pudo procesar el archivo PDF.");
+        setLoading(false);
+      }
+      return;
+    }
+
     const html5Qrcode = new Html5Qrcode("reader-hidden");
     try {
       const decodedText = await html5Qrcode.scanFile(file, true);
@@ -139,7 +193,7 @@ export default function ValidatePage() {
         <div className="validate-container search">
           <h1>Validar Boleto</h1>
           <p className="detail" style={{ marginBottom: "1.5rem" }}>
-            Ingresa, escanea o sube una foto del código de tu boleto para consultar su validez.
+            Ingresa, escanea o sube tu boleto (Imagen o PDF) para consultar su validez.
           </p>
 
           {!isScanning ? (
@@ -184,7 +238,7 @@ export default function ValidatePage() {
             type="file" 
             ref={fileInputRef} 
             onChange={handleFileUpload} 
-            accept="image/*" 
+            accept="image/*,application/pdf" 
             style={{ display: "none" }} 
           />
           <div id="reader-hidden" style={{ display: "none" }}></div>
