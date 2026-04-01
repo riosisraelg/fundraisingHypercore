@@ -15,8 +15,14 @@ interface FolioGridProps {
 function openWhatsApp(folio: string, status: "available" | "cancelled") {
   const msg =
     status === "available"
-      ? `Hola! Me interesa el boleto *${folio}* del Sorteo HyperCore 🎟️ ¿Está disponible? ¿Cómo puedo comprarlo?`
-      : `Hola! Vi que el boleto *${folio}* fue liberado en el Sorteo HyperCore 🎟️ ¿Puedo comprarlo?`;
+      ? `Hola! 👋 Quiero apartar el boleto *${folio}* del Sorteo HyperCore 🎟️\n\n` +
+        `Mi nombre: [tu nombre]\n` +
+        `Mi teléfono: [tu número]\n\n` +
+        `¿Sigue disponible? 😊`
+      : `Hola! 👋 Vi que el boleto *${folio}* fue liberado en el Sorteo HyperCore 🎟️\n\n` +
+        `Mi nombre: [tu nombre]\n` +
+        `Mi teléfono: [tu número]\n\n` +
+        `¿Puedo comprarlo? 😊`;
   const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, "_blank", "noopener,noreferrer");
 }

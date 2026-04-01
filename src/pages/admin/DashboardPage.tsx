@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
-import FolioGrid from "../../components/FolioGrid";
+import FolioGrid, { type TicketInfo } from "../../components/FolioGrid";
 
 interface FolioCell {
   number: number;
@@ -29,9 +29,12 @@ interface Ticket {
   created_at: string;
 }
 
+const API_BASE = import.meta.env.DEV ? "/api" : "https://d3uu50tlzv08gz.cloudfront.net/api";
+
 export default function DashboardPage() {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [recentTickets, setRecentTickets] = useState<Ticket[]>([]);
+  const [allTickets, setAllTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingExtra, setEditingExtra] = useState(false);
   const [extraAmount, setExtraAmount] = useState("");
@@ -44,6 +47,7 @@ export default function DashboardPage() {
         api.get<Ticket[]>("/tickets/", true),
       ]);
       setDashboard(dash);
+      setAllTickets(tickets);
       setRecentTickets(
         [...tickets]
           .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -80,6 +84,26 @@ export default function DashboardPage() {
   const progress = dashboard
     ? Math.min((dashboard.total_raised / dashboard.goal) * 100, 100)
     : 0;
+
+  async function handleCancel(ticketId: string) {
+    await api.patch(`/tickets/${ticketId}/cancel`, {}, true);
+    await loadDashboard();
+  }
+
+  function handleDownloadPdf(ticketId: string, folio: string) {
+    const token = localStorage.getItem("hypercore_admin_token");
+    fetch(`${API_BASE}/tickets/${ticketId}/download/pdf`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.blob())
+      .then((blob) => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `ticket-${folio}.pdf`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+  }
 
   return (
     <div className="admin-dashboard">
@@ -200,7 +224,14 @@ export default function DashboardPage() {
         {/* Folio grid */}
         {dashboard?.grid && (
           <div className="card">
-            <FolioGrid grid={dashboard.grid} title="Mapa de boletos" />
+            <FolioGrid
+              grid={dashboard.grid}
+              title="Mapa de boletos"
+              mode="admin"
+              tickets={allTickets as TicketInfo[]}
+              onCancel={handleCancel}
+              onDownloadPdf={handleDownloadPdf}
+            />
           </div>
         )}
 

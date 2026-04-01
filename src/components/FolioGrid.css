@@ -80,7 +80,9 @@
 
 .folio-sold {
   background: var(--primary);
-  color: var(--on-primary);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+  font-size: 0.7rem;
 }
 
 .folio-cancelled {
@@ -96,4 +98,65 @@
   .folio-cell {
     font-size: 0.65rem;
   }
+}
+
+/* Selected cell */
+.folio-selected {
+  outline: 2px solid var(--secondary);
+  outline-offset: 1px;
+  z-index: 2;
+}
+
+/* Admin popup */
+.folio-popup {
+  position: relative;
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  max-width: 20rem;
+}
+
+.folio-popup-close {
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--on-surface-variant);
+  line-height: 1;
+  padding: 2px 6px;
+}
+
+.folio-popup-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.folio-popup-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.folio-popup-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.folio-popup-actions {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.folio-popup-available {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
