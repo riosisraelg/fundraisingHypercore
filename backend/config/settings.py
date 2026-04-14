@@ -6,6 +6,7 @@ import os
 import sys
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -65,6 +66,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -94,18 +96,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database — PostgreSQL for production, SQLite for local dev
-DATABASE_URL = os.getenv('DATABASE_URL', '')
+DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
-    # Production: parse DATABASE_URL or use RDS env vars from Elastic Beanstalk
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('RDS_DB_NAME', 'hypercore_draw'),
-            'USER': os.getenv('RDS_USERNAME', 'postgres'),
-            'PASSWORD': os.getenv('RDS_PASSWORD', ''),
-            'HOST': os.getenv('RDS_HOSTNAME', 'localhost'),
-            'PORT': os.getenv('RDS_PORT', '5432'),
-        }
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
 else:
     # Local dev: SQLite
@@ -130,6 +128,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # --- Django REST Framework ---

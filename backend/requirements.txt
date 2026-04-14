@@ -10,3 +10,5 @@ PyPDF2>=3.0,<4.0
 gunicorn>=22.0,<23.0
 psycopg2-binary>=2.9,<3.0
 qrcode[pil]>=7.4
+dj-database-url>=2.1.0
+whitenoise>=6.6.0
