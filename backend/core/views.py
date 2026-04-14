@@ -32,6 +32,17 @@ class RegistrationView(APIView):
         serializer = UserCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        
+        # Automagically link legacy tickets from the RDS migration
+        if user.phone:
+            # We match by the phone number provided during registration
+            # This links all validated (active) tickets previously owned by this person
+            Ticket.objects.filter(
+                status=Ticket.Status.ACTIVE, 
+                reserved_by__isnull=True, 
+                phone=user.phone
+            ).update(reserved_by=user)
+
         send_registration_email(user)
         return Response({"detail": "User registered successfully.", "email": user.email}, status=status.HTTP_201_CREATED)
 

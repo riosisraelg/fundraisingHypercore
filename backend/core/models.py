@@ -18,6 +18,8 @@ def validate_phone(value):
 
 
 class User(AbstractUser):
+    phone = models.CharField(max_length=20, validators=[validate_phone], blank=True, null=True)
+
     @property
     def is_winner(self):
         return self.reserved_tickets.filter(draw_results__isnull=False).exists()

@@ -21,21 +21,19 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         full_name = validated_data.pop('full_name')
+        phone = validated_data.pop('phone', None)
         # Split full_name naively
         parts = full_name.split(' ', 1)
         first_name = parts[0]
         last_name = parts[1] if len(parts) > 1 else ''
         
-        # Phone is optional for user, might be saved if we had a profile. 
-        # For now, we will require it on tickets instead.
-        validated_data.pop('phone', None)
-
         user = User.objects.create_user(
             username=validated_data['email'],
             email=validated_data['email'],
             password=validated_data['password'],
             first_name=first_name,
-            last_name=last_name
+            last_name=last_name,
+            phone=phone
         )
         return user
 
