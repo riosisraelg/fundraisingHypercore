@@ -171,31 +171,9 @@ export default function TicketListPage() {
 
   function handleDownloadPdf(ticket: Ticket) {
     const token = localStorage.getItem("hypercore_admin_token");
-    fetch(`${API_BASE}/tickets/${ticket.id}/download/pdf`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          if (res.status === 401) {
-            alert("Tu sesion ha expirado. Inicia sesion de nuevo.");
-            window.location.href = "/admin/login";
-            return null;
-          }
-          throw new Error(`Error ${res.status}`);
-        }
-        return res.blob();
-      })
-      .then((blob) => {
-        if (!blob) return;
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `ticket-${ticket.folio}.pdf`;
-        a.click();
-        URL.revokeObjectURL(a.href);
-      })
-      .catch(() => {
-        alert("Error al descargar el PDF. Intenta de nuevo.");
-      });
+    const baseUrl = import.meta.env.VITE_API_URL || "/api";
+    // Direct link download with token in query param
+    window.open(`${baseUrl}/tickets/${ticket.id}/download/pdf?token=${token}`, '_blank');
   }
 
   if (loading) return <p>Cargando…</p>;

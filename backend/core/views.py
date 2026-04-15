@@ -188,8 +188,11 @@ class TicketEditView(APIView):
 
 
 
+from .authentication import JWTQueryParameterAuthentication
+
 class TicketDownloadPDFView(APIView):
     """GET /api/tickets/:id/download/pdf — Download ticket as PDF."""
+    authentication_classes = [JWTQueryParameterAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, ticket_id):
