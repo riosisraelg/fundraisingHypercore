@@ -65,6 +65,19 @@ export default function ReservePage() {
         >
           Volver a la tabla
         </button>
+
+        <div style={{ marginTop: "2rem", paddingTop: "2rem", borderTop: "1px solid var(--ghost-border)" }}>
+          <p className="label-meta" style={{ fontSize: "0.7rem", marginBottom: "0.5rem" }}>¿Prefieres que nosotros lo hagamos?</p>
+          <a 
+            href={`https://wa.me/5214421206701?text=${encodeURIComponent(`Hola Equipo HyperCore! 👋\n\nMe gustaría reservar los folios: ${folioList.join(", ")}.\n\n¿Podrían apoyarme con el registro manual? Mis datos son:\n- Nombre:\n- Teléfono:\n- Correo:`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-ghost" 
+            style={{ width: "100%", justifyContent: "center", border: "1px solid #25D366", color: "#128C7E", fontSize: "0.85rem", padding: "0.75rem" }}
+          >
+            Reservar por WhatsApp 🟢
+          </a>
+        </div>
       </div>
     </div>
   );
