@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
-import { api } from "../../lib/api";
 import "./ResultsPage.css";
 
 interface DrawResultPublic {
   folio: string;
   prize_rank: number;
   prize_name: string;
-}
-
-interface DrawResultsResponse {
-  results: DrawResultPublic[];
-  message?: string;
 }
 
 const RANK_EMOJI: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
@@ -20,7 +14,7 @@ const RANK_LABEL: Record<number, string> = {
   3: "3er Lugar",
 };
 
-const DRAW_DATE = new Date("2026-04-25T18:00:00-06:00"); // April 25, 6PM CST
+const DRAW_DATE = new Date("2026-04-29T19:40:00-06:00"); // April 29, 7:40 PM CST - Draw completed
 
 function getCountdown() {
   const now = new Date();
@@ -33,9 +27,26 @@ function getCountdown() {
 }
 
 export default function ResultsPage() {
-  const [results, setResults] = useState<DrawResultPublic[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [drawn, setDrawn] = useState(false);
+  // Hardcoded winners - Updated April 29, 2026
+  const [results] = useState<DrawResultPublic[]>([
+    {
+      folio: "HC-196",
+      prize_rank: 1,
+      prize_name: "$5,000 MXN"
+    },
+    {
+      folio: "HC-006", 
+      prize_rank: 2,
+      prize_name: "JBL Flip 7"
+    },
+    {
+      folio: "HC-020",
+      prize_rank: 3, 
+      prize_name: "Botella Maestro Dobel"
+    }
+  ]);
+  const [loading] = useState(false);
+  const [drawn] = useState(true); // Draw has been completed
   const [countdown, setCountdown] = useState(getCountdown());
 
   useEffect(() => {
@@ -43,19 +54,20 @@ export default function ResultsPage() {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    api
-      .get<DrawResultsResponse>("/draw/results")
-      .then((data) => {
-        setResults(data.results);
-        setDrawn(data.results.length > 0);
-      })
-      .catch(() => {
-        setResults([]);
-        setDrawn(false);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  // Commented out API call - using hardcoded results
+  // useEffect(() => {
+  //   api
+  //     .get<DrawResultsResponse>("/draw/results")
+  //     .then((data) => {
+  //       setResults(data.results);
+  //       setDrawn(data.results.length > 0);
+  //     })
+  //     .catch(() => {
+  //       setResults([]);
+  //       setDrawn(false);
+  //     })
+  //     .finally(() => setLoading(false));
+  // }, []);
 
   return (
     <div className="results-page">
@@ -65,6 +77,9 @@ export default function ResultsPage() {
         <p className="results-loading">Cargando resultados…</p>
       ) : drawn ? (
         <>
+          <div className="draw-completed-banner">
+            <p className="draw-date">🎉 Sorteo realizado el 29 de Abril, 2026 — 7:40 PM</p>
+          </div>
           <div className="results-list">
             {results
               .sort((a, b) => a.prize_rank - b.prize_rank)

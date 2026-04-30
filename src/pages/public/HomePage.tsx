@@ -42,21 +42,19 @@ export default function HomePage() {
       {/* Hero */}
       <section className="hero-section">
         <div className="hero-content">
-          <span className="hero-badge">🎟️ Rifa Benéfica — 25 de Abril, 6:00 PM</span>
-          <h1 className="hero-title">¡Compra tu boleto y gana premios!</h1>
+          <span className="hero-badge">🎉 Rifa Benéfica — ¡Sorteo Realizado!</span>
+          <h1 className="hero-title">¡Sorteo realizado! Revisa los resultados</h1>
           <p className="hero-description">
             Rifa benéfica de Team HyperCore (Universidad Tecmilenio).
-            Participa por 3 premios premium y ayúdanos a llegar a la final nacional de KIA Innovation en Cancún.
+            El sorteo se realizó el 29 de abril. ¡Revisa si tu boleto fue ganador!
           </p>
           
           <div className="hero-cta-group">
             <a
-              href={`https://wa.me/5214421206701?text=${encodeURIComponent("Hola! Me interesa comprar boleto(s) para la rifa HyperCore\n\nCantidad de boletos: \nFolios que quiero (o aleatorio): \nNombre completo: \nTeléfono de contacto: ")}`}
+              href="/results"
               className="btn-primary hero-cta"
-              target="_blank"
-              rel="noopener noreferrer"
             >
-              🎟️ Comprar Boleto vía WhatsApp
+              🏆 Ver Resultados del Sorteo
             </a>
           </div>
 
@@ -174,8 +172,8 @@ export default function HomePage() {
                 <li className="step-item-modern">
                   <div className="step-icon">5</div>
                   <div className="step-info">
-                    <h3 className="step-title-text">Gran Sorteo</h3>
-                    <p className="step-desc-text">25 de Abril, 6:00 PM. ¡Mucha suerte!</p>
+                    <h3 className="step-title-text">Sorteo Realizado</h3>
+                    <p className="step-desc-text">29 de Abril, 7:40 PM. ¡Revisa los resultados!</p>
                   </div>
                 </li>
               </ol>
@@ -299,10 +297,10 @@ export default function HomePage() {
             <div className="timeline-marker"></div>
             <div className="timeline-content">
               <span className="timeline-date">Abril 2026</span>
-              <h3 className="timeline-title">Recaudación y Gran Sorteo</h3>
+              <h3 className="timeline-title">Sorteo Realizado y Ganadores</h3>
               <p className="timeline-desc">
-                Organizamos esta rifa benéfica para cubrir los viáticos y llevar nuestro proyecto a 
-                las grandes ligas. ¡Aquí es donde tú eres clave! El sorteo será el 25 de abril.
+                ¡El sorteo se realizó exitosamente el 29 de abril! Los ganadores ya fueron anunciados.
+                Gracias a todos por su participación y apoyo.
               </p>
             </div>
           </div>
